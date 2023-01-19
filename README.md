@@ -1,0 +1,2 @@
+# GcpAPIGatewayGitHubActions
+Google CloudのAPI GatewayにOpenAPIドキュメントを適用するGitHub Actionsのサンプル
