@@ -7,13 +7,13 @@ on:
       - stg
       - dev
     paths:
-      - "${{vars.OPEN_API_SPEC}}" # OpenAPIドキュメントのPath
+      - docs/api.yaml # OpenAPIドキュメントのPath
 
 env:
   PROJECT_NUM: ${{ vars.PROJECT_NUM }} # GCPのプロジェクト番号
   API_NAME: ${{ vars.API_NAME }} # API GatewayのAPI名
   CONFIG_NAME: ${{ vars.CONFIG_NAME }} # API GatewayのConfig名
-  OPEN_API_SPEC: ${{ vars.OPEN_API_SPEC }} # OpenAPIドキュメントのPath
+  OPEN_API_SPEC: docs/api.yaml # OpenAPIドキュメントのPath
   ID_POOL: ${{ vars.ID_POOL }} # ID Pool名 (OIDC接続用)
   ID_PROVIDER: ${{ vars.ID_PROVIDER }} # ID Provider名 (OIDC接続用)
   SA_NAME: ${{ vars.SA_NAME }} # サービスアカウント名(OIDC接続用)
