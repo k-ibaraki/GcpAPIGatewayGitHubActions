@@ -18,15 +18,6 @@ env:
   ID_PROVIDER: ${{ vars.ID_PROVIDER }} # ID Provider名 (OIDC接続用)
   SA_NAME: ${{ vars.SA_NAME }} # サービスアカウント名(OIDC接続用)
 
-on:
-  pull_request:
-    branches:
-      - main
-      - stg
-      - dev
-    paths:
-      - "${{env.OPEN_API_SPEC}}"
-
 jobs:
   api-gw-config:
     runs-on: ubuntu-latest
