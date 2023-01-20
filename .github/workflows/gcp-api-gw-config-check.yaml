@@ -9,22 +9,20 @@ on:
     paths:
       - docs/api.yaml # OpenAPIドキュメントのPath
 
-env:
-  OPEN_API_SPEC: docs/api.yaml # OpenAPIドキュメントのPath
-  PROJECT_NUM: ${{ vars.PROJECT_NUM }} # GCPのプロジェクト番号
-  API_NAME: ${{ vars.API_NAME }} # API GatewayのAPI名
-  CONFIG_NAME: ${{ vars.CONFIG_NAME }} # API GatewayのConfig名
-  ID_POOL: ${{ vars.ID_POOL }} # ID Pool名 (OIDC接続用)
-  ID_PROVIDER: ${{ vars.ID_PROVIDER }} # ID Provider名 (OIDC接続用)
-  SA_NAME: ${{ vars.SA_NAME }} # サービスアカウント名(OIDC接続用)
-
 jobs:
   api-gw-config:
     runs-on: ubuntu-latest
     permissions:
       contents: "read"
       id-token: "write"
-
+    env:
+      OPEN_API_SPEC: docs/api.yaml # OpenAPIドキュメントのPath
+      PROJECT_NUM: ${{ vars.PROJECT_NUM }} # GCPのプロジェクト番号
+      API_NAME: ${{ vars.API_NAME }} # API GatewayのAPI名
+      CONFIG_NAME: ${{ vars.CONFIG_NAME }} # API GatewayのConfig名
+      ID_POOL: ${{ vars.ID_POOL }} # ID Pool名 (OIDC接続用)
+      ID_PROVIDER: ${{ vars.ID_PROVIDER }} # ID Provider名 (OIDC接続用)
+      SA_NAME: ${{ vars.SA_NAME }} # サービスアカウント名(OIDC接続用)
     steps:
       - name: Checkout
         uses: "actions/checkout@v3"
@@ -32,7 +30,7 @@ jobs:
       # Google Cloudにログイン
       - id: auth
         name: Authenticate to Google Cloud
-        uses: "google-github-actions/auth@v0"
+        uses: google-github-actions/auth@v0.4.0
         with:
           workload_identity_provider: "projects/${{env.PROJECT_NUM}}/locations/global/workloadIdentityPools/${{env.ID_POOL}}/providers/${{env.ID_PROVIDER}}"
           service_account: ${{env.SA_NAME}}
