@@ -7,7 +7,7 @@ on:
       - stg
       - dev
     paths:
-      - docs/api.yaml # OpenAPIドキュメントのPath
+      - ${{ vars.OPEN_API_SPEC }} # OpenAPIドキュメントのPath
 
 env:
   PROJECT_ID: ${{ vars.PROJECT_ID}} # GCPのプロジェクト名
@@ -15,10 +15,19 @@ env:
   API_NAME: ${{ vars.API_NAME }} # API GatewayのAPI名
   GW_NAME: ${{ vars.GW_NAME }} # API GatewayのGateway名
   CONFIG_NAME: ${{ vars.CONFIG_NAME }} # API GatewayのConfig名
-  OPEN_API_SPEC: docs/api.yaml # OpenAPIドキュメントのPath
+  OPEN_API_SPEC: ${{ vars.OPEN_API_SPEC }} # OpenAPIドキュメントのPath
   ID_POOL: ${{ vars.ID_POOL }} # ID Pool名 (OIDC接続用)
   ID_PROVIDER: ${{ vars.ID_PROVIDER }} # ID Provider名 (OIDC接続用)
   SA_NAME: ${{ vars.SA_NAME }} # サービスアカウント名(OIDC接続用)
+
+on:
+  push:
+    branches:
+      - main
+      - stg
+      - dev
+    paths:
+      - "${{env.OPEN_API_SPEC}}"
 
 jobs:
   api-gw-config:
