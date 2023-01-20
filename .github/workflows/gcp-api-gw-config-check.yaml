@@ -1,0 +1,56 @@
+name: gcp-api-gw-config-check
+
+env:
+  PROJECT_NUM: ${{ vars.PROJECT_NUM }} # GCPのプロジェクト番号
+  API_NAME: ${{ vars.API_NAME }} # API GatewayのAPI名
+  CONFIG_NAME: ${{ vars.CONFIG_NAME }} # API GatewayのConfig名
+  OPEN_API_SPEC: ${{ vars.OPEN_API_SPEC }} # OpenAPIドキュメントのPath
+  ID_POOL: ${{ vars.ID_POOL }} # ID Pool名 (OIDC接続用)
+  ID_PROVIDER: ${{ vars.ID_PROVIDER }} # ID Provider名 (OIDC接続用)
+  SA_NAME: ${{ vars.SA_NAME }} # サービスアカウント名(OIDC接続用)
+
+on:
+  pull_request:
+    branches:
+      - main
+      - stg
+      - dev
+    paths:
+      - "${{env.OPEN_API_SPEC}}"
+
+jobs:
+  api-gw-config:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - name: Checkout
+        uses: "actions/checkout@v3"
+
+      # Google Cloudにログイン
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: "google-github-actions/auth@v0"
+        with:
+          workload_identity_provider: "projects/${{env.PROJECT_NUM}}/locations/global/workloadIdentityPools/${{env.ID_POOL}}/providers/${{env.ID_PROVIDER}}"
+          service_account: ${{env.SA_NAME}}
+
+      - name: Set up Cloud SDK
+        uses: "google-github-actions/setup-gcloud@v0"
+
+      # 設定名に日時を付与する為
+      - id: datetime
+        name: get Current datetime and set Config name
+        run: |
+          DATETIME=`TZ='Asia/Tokyo' date '+%F-%H%M%S'`
+          echo "CONFIG=${{env.CONFIG_NAME}}-${DATETIME}" >> $GITHUB_OUTPUT
+
+      # GCP API Gatewayのコンフィグを作成
+      - name: Create GCP API Gateway Config
+        run: gcloud api-gateway api-configs create ${{steps.datetime.outputs.CONFIG }} --api=${{env.API_NAME}} --openapi-spec=${{env.OPEN_API_SPEC}}
+
+      # GCP Api Gatewayにコンフィグを削除
+      - name: Delete GCP API Gateway Config
+        run: gcloud api-gateway api-configs delete ${{steps.datetime.outputs.CONFIG }} --api=${{env.API_NAME}} -q
