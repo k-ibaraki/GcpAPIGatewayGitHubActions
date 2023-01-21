@@ -1,7 +1,7 @@
 name: gcp-api-gw-config-check
 
 on:
-  push:
+  pull_request:
     branches:
       - main
     paths:
