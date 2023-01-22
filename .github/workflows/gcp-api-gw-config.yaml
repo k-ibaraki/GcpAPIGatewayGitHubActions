@@ -15,7 +15,6 @@ jobs:
       id-token: "write"
     env:
       OPEN_API_SPEC: docs/api.yaml # OpenAPIドキュメントのPath
-      PROJECT_ID: ${{ vars.PROJECT_ID}} # GCPのプロジェクト名
       PROJECT_NUM: ${{ vars.PROJECT_NUM }} # GCPのプロジェクト番号
       API_NAME: ${{ vars.API_NAME }} # API GatewayのAPI名
       GW_NAME: ${{ vars.GW_NAME }} # API GatewayのGateway名
@@ -51,4 +50,4 @@ jobs:
 
       # GCP Api Gatewayにコンフィグを適用
       - name: Apply Config to Gateway
-        run: gcloud api-gateway gateways update ${{env.GW_NAME}} --project=${{env.PROJECT_ID}} --api=${{env.API_NAME}} --api-config=${{steps.datetime.outputs.CONFIG }} --location asia-northeast1
+        run: gcloud api-gateway gateways update ${{env.GW_NAME}} --api=${{env.API_NAME}} --api-config=${{steps.datetime.outputs.CONFIG }} --location asia-northeast1
